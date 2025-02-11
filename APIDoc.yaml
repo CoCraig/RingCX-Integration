@@ -1,0 +1,2363 @@
+openapi: 3.0.0
+info:
+  description:  |-
+    These are sample partner integration API specification. 
+    For interaction-metadata APIs please fetch the data 5 minutes before the current time else you will get error from the API .
+  title: RingCentral RingCx API
+  termsOfService: https://developers.ringcentral.com
+  version: "1.0"
+servers:
+  - url: http://localhost:8082/api
+security:
+  - BearerAuth: []
+paths:
+
+  /internal/cx/integration/v6/accounts/{rcAccountId}/interaction-metadata:
+    post:
+      tags:
+        - Internal Integration API
+      summary: Builds interaction segment metadata
+      description: 'This is an internal API used to fetch interaction metadata for VOICE/DIGITAL for all segments under provided time duration. Please fetch the data 5 minutes before the current time else you will get error from the API .'
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '980634004'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractionMetadataRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RCInteractionSegmentMetaData2Array'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /internal/cx/integration/v6/accounts/980634004/interaction-metadata - POST
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /internal/cx/integration/v6/accounts/980634004/interaction-metadata - POST
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /internal/cx/integration/v6/accounts/980634004/interaction-metadata - POST
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /internal/cx/integration/v6/accounts/980634004/interaction-metadata - POST
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: [ ]
+
+  /internal/cx/integration/v2/accounts/{rcAccountId}/sub-accounts/{subAccountId}/transcripts/dialogs/{dialogId}/segments/{segmentId}:
+    get:
+      tags:
+        - Internal Integration API
+      summary: Fetches Transcript data for both voice and digital
+      description: 'This is an internal API to fetch interaction transcript data for provided dialogid and segmentid'
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '980634004'
+        - name: subAccountId
+          in: path
+          description: Sub Account id
+          required: true
+          schema:
+            type: string
+            example: '99999999'
+        - name: dialogId
+          in: path
+          description: dialog id
+          required: true
+          schema:
+            type: string
+            example: 'd-668cf1d0a626550007d01d1b-1720512976864-1909690a312da'
+        - name: segmentId
+          in: path
+          description: segment id
+          required: true
+          schema:
+            type: string
+            example: 'd-668d1051a626550007d02828-1720520785904-19097081cf749'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RCInteractionTranscriptData'
+              examples:
+                example1:
+                  value:
+                    channelClass: "DIGITAL"
+                    errorCode: null
+                    errorMessage: null
+                    transcript:
+                      -  participantId: "d-6555aa00cd0df30007872d38-6555aa00cd0df30007872d37"
+                         rcUserId: null
+                         participantName: null
+                         participantType: contact
+                         timestamp: "1721651880000"
+                         message: "I cannot transfer number porting"
+                      -  participantId: "d-6555b45ccd0df30007872dd2-1700115548459-18bd6d7301135"
+                         rcUserId: null
+                         participantName: null
+                         participantType: agent
+                         timestamp: "1721651881000"
+                         message: "Can you provide your RC account? And describe the steps you met?"
+                example2:
+                  value:
+                    channelClass: VOICE
+                    errorCode: null
+                    errorMessage: null
+                    transcript:
+                      -  participantId: "d-6555aa00cd0df30007872d38-6555aa00cd0df30007872d37"
+                         rcUserId: null
+                         participantName: null
+                         participantType: null
+                         timestamp: "1721651880000"
+                         message: "yes sir"
+                      -  participantId: "d-6555b45ccd0df30007872dd2-1700115548459-18bd6d7301135"
+                         rcUserId: null
+                         participantName: null
+                         participantType: null
+                         timestamp: "1721651881000"
+                         message: "ok"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:  Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: [ ]
+
+  /internal/cx/integration/v2/accounts/{rcAccountId}/sub-accounts/{subAccountId}/recordings/dialogs/{dialogId}/segments/{segmentId}:
+    get:
+      tags:
+        - Internal Integration API
+      summary: Fetches recordings data
+      description: 'This internal API fetches recording data for a specified dialog and segment. This is a streaming API, it will return an audio stream for given request.'
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '980634004'
+        - name: subAccountId
+          in: path
+          description: subaccount id
+          required: true
+          schema:
+            type: string
+            example: '99999999'
+        - name: dialogId
+          in: path
+          description: dialog id
+          required: true
+          schema:
+            type: string
+            example: 'd-65f286b0ee1c4900074c1bb2-1710393008514'
+        - name: segmentId
+          in: path
+          description: segment id
+          required: true
+          schema:
+            type: string
+            example: 'd-668cf767a626550007d021f6-668cf767a626550007d021f5'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /internal/cx/integration/v2/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/recordings/dialogs/{dialogId}/segments/{segmentId}:
+    get:
+      tags:
+        - Public Integration API
+      summary: Fetches recordings data
+      description: 'This API fetches recording data for a specified dialog and segment. This is a streaming API, it will return an audio stream for given request.'
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '980634004'
+        - name: subAccountId
+          in: path
+          description: subaccount id
+          required: true
+          schema:
+            type: string
+            example: '99999999'
+        - name: dialogId
+          in: path
+          description: dialog id
+          required: true
+          schema:
+            type: string
+            example: 'd-65f286b0ee1c4900074c1bb2-1710393008514'
+        - name: segmentId
+          in: path
+          description: segment id
+          required: true
+          schema:
+            type: string
+            example: 'd-668cf767a626550007d021f6-668cf767a626550007d021f5'
+
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/recordings/dialogs/d-65f286b0ee1c4900074c1bb2-1710393008514/segments/d-668cf767a626550007d021f6-668cf767a626550007d021f5 - GET
+                timestamp: 1611847650696
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/interaction-metadata:
+    post:
+      tags:
+        - Public Integration API
+      summary: Returns Interaction Segment Metadata
+      description: 'This API retrieves interaction metadata for both VOICE and DIGITAL communication channels across all segments within a specified time range. The response includes details about interaction types and their associated metadata.
+      Please fetch the data 5 minutes before the current time else you will get error from the API
+      
+      For voice interactions, the channelId corresponds to the DNIS (Phone number), and the channelType is set to VOICE.
+
+      For digital interactions, the `channelType` fields are populated based on the specific digital channel used. Below are examples of how these fields are set for various digital channels:
+
+      - **Email**:
+        {
+          "channelType": "EMAIL"
+        }
+
+      - **Engage Messaging**:
+        {
+          "channelType": "ENGAGE_MESSAGING"
+        }
+
+      - **Messenger**:
+        {
+          "channelType": "MESSENGER"
+        }
+        
+      - **X/Twitter**:
+        {
+          "channelType": "X/Twitter"
+        }
+        
+      - **Facebook Page**:
+        {
+          "channelType": "Facebook Page"
+        }
+        
+      - **Instagram**:
+        {
+          "channelType": "Instagram"
+        }
+        
+      - **RingCentral SMS/MMS**:
+        {
+          "channelType": "RingCentral SMS/MMS"
+        }
+        
+        
+     **The values of `channelType` will vary accordingly, depending on the specific digital channel.**'
+
+
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '980634004'
+        - name: subAccountId
+          in: path
+          description: RingCX subAccount id
+          required: true
+          schema:
+            type: string
+            example: '99999999'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractionMetadataRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalabrioInteractionSegmentMetaData2Array'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/interaction-metadata - POST
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Jwt is expired
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/interaction-metadata - POST
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/interaction-metadata - POST
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/interaction-metadata - POST
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: [ ]
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/transcripts/dialogs/{dialogId}/segments/{segmentId}:
+    get:
+      tags:
+        - Public Integration API
+      summary: Fetches Transcript data for both voice and digital
+      description: 'This API fetches interaction transcript data for provided dialogId and segmentId. This is a streaming API, it will return an audio stream for given request.'
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '980634004'
+        - name: subAccountId
+          in: path
+          description: Sub Account id
+          required: true
+          schema:
+            type: string
+            example: '99999999'
+        - name: dialogId
+          in: path
+          description: dialog id
+          required: true
+          schema:
+            type: string
+            example: 'd-668cf1d0a626550007d01d1b-1720512976864-1909690a312da'
+        - name: segmentId
+          in: path
+          description: segment id
+          required: true
+          schema:
+            type: string
+            example: 'd-668d1051a626550007d02828-1720520785904-19097081cf749'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RCInteractionTranscriptData'
+              examples:
+                example1:
+                  value:
+                    channelClass: "DIGITAL"
+                    transcript:
+                      -  participantId: "d-6555aa00cd0df30007872d38-6555aa00cd0df30007872d37"
+                         rcUserId: "665127314"
+                         participantType: "contact"
+                         timestamp: "1721651880000"
+                         message: "I cannot transfer number porting"
+                      -  participantId: "d-6555b45ccd0df30007872dd2-1700115548459-18bd6d7301135"
+                         rcUserId: "665127314"
+                         participantType: "agent"
+                         timestamp: "1721651881000"
+                         message: "Can you provide your RC account? And describe the steps you met?"
+                example2:
+                  value:
+                    channelClass: VOICE
+                    errorCode: null
+                    errorMessage: null
+                    transcript:
+                      -  participantId: "d-6555aa00cd0df30007872d38-6555aa00cd0df30007872d37"
+                         rcUserId: null
+                         participantName: null
+                         participantType: null
+                         timestamp: "1721651880000"
+                         message: "yes sir"
+                      -  participantId: "d-6555b45ccd0df30007872dd2-1700115548459-18bd6d7301135"
+                         rcUserId: null
+                         participantName: null
+                         participantType: null
+                         timestamp: "1721651881000"
+                         message: "ok"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:  Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /cx/integration/v1/accounts/980634004/sub-accounts/99999999/transcripts/dialogs/d-668cf1d0a626550007d01d1b-1720512976864-1909690a312da/segments/d-668d1051a626550007d02828-1720520785904-19097081cf749 - GET
+                timestamp: 1611847650696
+
+      security:
+        - BearerAuth: [ ]
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/queue-groups:
+    get:
+      tags:
+        - Public Integration API
+      summary: Returns a list of queue groups
+      description: 'This API returns a list of all queue-groups for given sub-account'
+      operationId: getQueueGroups
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '138885004'
+        - name: subAccountId
+          in: path
+          description: Engage Voice sub-account id
+          required: true
+          schema:
+            type: string
+            example: '99999033'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueueGroup'
+                example:
+                  - queueGroupId: 1009
+                    groupName: Queue group 1
+                    queueGroupType: VOICE
+                  - queueGroupId: 1010
+                    groupName: Queue group 2
+                    queueGroupType: DIGITAL
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups - GET
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups - GET
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups - GET
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups - GET
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: []
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/queue-groups/{queueGroupId}/with-agents:
+    get:
+      tags:
+        - Public Integration API
+      summary: Returns a list of agent ids of the queue group.
+      description: 'This API returns a list of all queues and their associated agents for given sub-account and queue-group id. Note: Maximum number of records returned by this API is 2000.'
+      operationId: getQueuesWithAgents
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '138885004'
+        - name: subAccountId
+          in: path
+          description: Engage Voice sub-account id
+          required: true
+          schema:
+            type: string
+            example: '99990033'
+        - name: queueGroupId
+          in: path
+          description: Queue group ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1009
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CXQueueWithAgents'
+                example:
+                  - queueId: 555
+                    queueName: Test queue 1
+                    queueType: VOICE
+                    queueGroupId: 1009
+                    isActive: true
+                    createdOn: '2020-07-21T17:32:28Z'
+                    agentIds:
+                      - 10
+                      - 20
+                  - queueId: 556
+                    queueName: Test queue 2
+                    queueType: DIGITAL
+                    queueGroupId: 1009
+                    isActive: true
+                    createdOn: '2020-07-21T17:32:28Z'
+                    agentIds:
+                      - 30
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups/1009/with-agents
+                  - GET
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups/1009/with-agents
+                  - GET
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups/1009/with-agents
+                  - GET
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/queue-groups/1009/with-agents
+                  - GET
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: []
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/agg-queue-stats:
+    post:
+      tags:
+        - Public Integration API
+      summary: Builds queue statistics
+      operationId: buildAggQueueStats
+      description: 'This API returns statistics of all queues for given sub-account and duration.'
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '138885004'
+        - name: subAccountId
+          in: path
+          description: Engage Voice sub-account id
+          required: true
+          schema:
+            type: string
+            example: '99999033'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggregatedIntegrationParams'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AggregatedQueueStats'
+              example:
+                - abandIxnCnt: 0
+                  waitDur: 13
+                  talkingIxnDur: 90
+                  queuedAnswLongestQueDur: 1
+                  wrapUpDur: 13
+                  abandShortIxnCnt: 0
+                  dateTimeFrom: '03-04-2024T01:00:00'
+                  overflowOutIxnCnt: 0
+                  queueName: Queue
+                  answIxnCnt: 3
+                  abandWithinSlCnt: 0
+                  offdDirectIxnCnt: 3
+                  overflowInIxnCnt: 0
+                  queuedAbandLongestQueDur: 0
+                  interval: 60
+                  queuedAndAnswIxnDur: 9
+                  queuedAndAbandIxnDur: 0
+                  ansServicelevelCnt: 0
+                  queue: 5686
+                - abandIxnCnt: 0
+                  waitDur: 13
+                  talkingIxnDur: 90
+                  queuedAnswLongestQueDur: 1
+                  wrapUpDur: 13
+                  abandShortIxnCnt: 0
+                  dateTimeFrom: '03-04-2024T02:00:00'
+                  overflowOutIxnCnt: 0
+                  queueName: Queue 2
+                  answIxnCnt: 3
+                  abandWithinSlCnt: 0
+                  offdDirectIxnCnt: 3
+                  overflowInIxnCnt: 0
+                  queuedAbandLongestQueDur: 0
+                  interval: 60
+                  queuedAndAnswIxnDur: 9
+                  queuedAndAbandIxnDur: 0
+                  ansServicelevelCnt: 0
+                  queue: 5686
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-queue-stats - POST
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-queue-stats - POST
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-queue-stats - POST
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-queue-stats - POST
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: []
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/agg-agent-extended-stats:
+    post:
+      tags:
+        - Public Integration API
+      summary: Builds extended agent queue statistics
+      operationId: buildExtendedAggQueueStats
+      description: 'This API returns statistics of all queues along with their agents for given Sub-Account and duration.'
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '138885004'
+        - name: subAccountId
+          in: path
+          description: Engage Voice sub-account id
+          required: true
+          schema:
+            type: string
+            example: '99990033'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggregatedIntegrationParams'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedAggregatedQueueStats'
+              example:
+                - dateTimeFrom: '03-04-2024T05:00:00'
+                  agentId: 1
+                  queueName: Queue
+                  answIxnCnt: 1
+                  transferOutIxnCnt: 4
+                  talkingIxnDur: 56
+                  agentName: aws93-l13-las01 test number
+                  interval: 60
+                  queue: 5682
+                  wrapUpDur: 0
+                - dateTimeFrom: '03-04-2024T06:00:00'
+                  agentId: 10693
+                  queueName: Neringa queue 2
+                  answIxnCnt: 2
+                  transferOutIxnCnt: 0
+                  talkingIxnDur: 137
+                  agentName: Neringa Norkute
+                  interval: 60
+                  queue: 5688
+                  wrapUpDur: 5
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-extended-stats -
+                  POST
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:  Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-extended-stats -
+                  POST
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-extended-stats -
+                  POST
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: >-
+                  /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-extended-stats -
+                  POST
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: []
+
+  /cx/integration/v1/accounts/{rcAccountId}/sub-accounts/{subAccountId}/agg-agent-stats:
+    post:
+      tags:
+        - Public Integration API
+      summary: Builds agent statistics
+      description: 'This API returns statistics of all agents for given sub-account and duration.'
+      operationId: buildAggAgentStats
+      parameters:
+        - name: rcAccountId
+          in: path
+          description: RC account id
+          required: true
+          schema:
+            type: string
+            example: '138885004'
+        - name: subAccountId
+          in: path
+          description: Engage Voice sub-account id
+          required: true
+          schema:
+            type: string
+            example: '99990033'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggregatedIntegrationParams'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AggregatedAgentStats'
+              example:
+                - directOutIxnCnt: 0
+                  pauseDur: 900
+                  agentId: 33
+                  availDur: 3376
+                  waitDur: 2476
+                  directOutIxnDur: 0
+                  agentName: 'test number, aws91-l22-engage'
+                  totWorkDur: 3376
+                  adminDur: 0
+                  dateTimeFrom: '03-04-2024T08:00:00'
+                  directInIxnDur: 0
+                  interval: 60
+                  directInIxnCnt: 0
+                - directOutIxnCnt: 0
+                  pauseDur: 0
+                  agentId: 132598
+                  availDur: 117
+                  waitDur: 113
+                  directOutIxnDur: 0
+                  agentName: 'kaduk, alena'
+                  totWorkDur: 117
+                  adminDur: 0
+                  dateTimeFrom: '03-04-2024T09:00:00'
+                  directInIxnDur: 5
+                  interval: 60
+                  directInIxnCnt: 1
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Bad request
+                cause: ""
+                generalMessage: The supplied data is not valid
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-stats - POST
+                timestamp: 1611847650696
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Jwt is expired.
+        '403':
+          description: 'You do not have permission to access this resource.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Access is denied.
+                cause: ""
+                generalMessage: You do not have permission to access this resource
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-stats - POST
+                timestamp: 1611847650696
+        '404':
+          description: 'The resource you requested does not exist.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Not found
+                cause: ""
+                generalMessage: The resource you have requested does not exist
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-stats - POST
+                timestamp: 1611847650696
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              example:
+                details: ""
+                developerMessage: Internal server error
+                cause: ""
+                generalMessage: An Internal Server Error occurred while processing this request
+                requestUri: /cx/integration/v1/accounts/138885004/sub-accounts/99999033/agg-agent-stats - POST
+                timestamp: 1611847650696
+      security:
+        - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RCInteractionSegmentMetaData2Array:
+      type: array
+      items:
+        $ref: '#/components/schemas/DialogSegmentMetaData'
+      example:
+        - subAccountId: "99999999"
+          dialogId: "s-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808"
+          interactionId: "202407221928172035020000000572"
+          channelId: "2013770791"
+          channelType: "VOICE"
+          channelClass: "VOICE"
+          channelEndpointAddress: "7312066731"
+          contactEndpointAddress: "2013770791"
+          dialogOrigination: "INBOUND"
+          dialogStartTimeMs: "2024-07-22T11:24:40.000Z"
+          dialogEndTimeMs: "2024-07-22T11:24:47.000Z"
+          dialogDurationMs: 7000
+          segmentId: "p-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808-190dcc63d90ab"
+          segmentType: "OUTBOUND"
+          segmentParticipantId: "449438"
+          segmentParticipantRcExtensionId: "985901004"
+          segmentStartTimeMs: "2024-07-22T11:24:40.000Z"
+          segmentEndTimeMs: "2024-07-22T11:24:47.000Z"
+          segmentDurationMs: 7000
+          segmentAgentGroupId: "76873"
+          systemDisposition: "ANSWER"
+          agentDisposition: "Success"
+          agentNotes: "requeue to others"
+          hasRecording: true
+          hasTranscript: true
+          segmentEvents:
+            - eventTimeMs: "2024-07-22T11:24:40.000Z"
+              clientEventTimeMs: "2024-07-22T11:24:40.000Z"
+              eventType: "REC_START"
+            - eventTimeMs: "2024-07-22T11:24:47.000Z"
+              clientEventTimeMs: "2024-07-22T11:24:47.000Z"
+              eventType: "REC_STOP"
+
+
+        -  subAccountId: "99999999"
+           dialogId: "d-65fc2f3a382dd00007d8a5d7-1711025979007"
+           interactionId: "202407230228251400000000001026"
+           channelId: "ENGAGE_MESSAGING"
+           channelType: "ENGAGE_MESSAGING"
+           channelClass: "DIGITAL"
+           channelEndpointAddress: "+16506675176"
+           contactEndpointAddress: "+1324"
+           dialogOrigination: "INBOUND"
+           dialogStartTimeMs: "2024-07-23T02:28:25.014Z"
+           dialogEndTimeMs: "2024-07-23T02:28:42.000Z"
+           dialogDurationMs: 17000
+           segmentId: "d-669e351bef0ea5000753266b-669f4d88a7ba580007b48caf"
+           segmentType: "AGENT"
+           segmentParticipantId: "789438"
+           segmentParticipantRcExtensionId: "1552533005"
+           segmentStartTimeMs: "2024-07-23T02:28:25.000Z"
+           segmentEndTimeMs: "2024-07-23T02:28:42.000Z"
+           segmentDurationMs: 17000
+           segmentAgentGroupId: "79698"
+           systemDisposition: null
+           agentDisposition: "Success"
+           agentNotes: "Engage Messaging Notes"
+           hasRecording: false
+           hasTranscript: true
+           segmentEvents : null
+
+        -  subAccountId: "99999999"
+           dialogId: "d-65fc2f3a382dd00007d8a5d7-1711025979007"
+           interactionId: "202407230228251400000000001026"
+           channelId: "ENGAGE_MESSAGING"
+           channelType: "ENGAGE_MESSAGING"
+           channelClass: "DIGITAL"
+           channelEndpointAddress: "+16506675176"
+           contactEndpointAddress: "+1324"
+           dialogOrigination: "INBOUND"
+           dialogStartTimeMs: "2024-07-23T02:28:25.014Z"
+           dialogEndTimeMs: "2024-07-23T02:28:42.000Z"
+           dialogDurationMs: 17000
+           segmentId: "d-669e351bef0ea5000753266b-669f4d88a7ba580007b48caf"
+           segmentType: "AGENT"
+           segmentParticipantId: "789438"
+           segmentParticipantRcExtensionId: "1552533005"
+           segmentStartTimeMs: "2024-07-23T02:28:25.000Z"
+           segmentEndTimeMs: "2024-07-23T02:28:42.000Z"
+           segmentDurationMs: 17000
+           segmentAgentGroupId: "79698"
+           systemDisposition: null
+           agentDisposition: "Success"
+           agentNotes: "Engage Messaging Notes"
+           hasRecording: false
+           hasTranscript: true
+           segmentEvents : null
+    DialogSegmentMetaData:
+      type: object
+      required:
+        - subAccountId
+        - dialogId
+        - interactionId
+        - channelType
+        - channelClass
+        - channelEndpointAddress
+        - contactEndpointAddress
+        - dialogOrigination
+        - dialogStartTimeMs
+        - dialogEndTimeMs
+        - dialogDurationMs
+        - segmentId
+        - segmentType
+        - segmentParticipantId
+        - segmentStartTimeMs
+        - segmentEndTimeMs
+        - segmentDurationMs
+      properties:
+        subAccountId:
+          type: integer
+          format: int64
+          description: subacount id
+          example: 99999999
+        dialogId:
+          type: string
+          description: Unique dialog ID used to connect different dialog segments together in transfer/conference scenarios.
+          example: 's-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808'
+        interactionId:
+          type: string
+          description: Deprecated. Provided for backward compatibility only. Replaced by dialogId. Unique interaction ID used to connect different interaction (aka dialog) segments together in transfer/conference scenarios.
+          example: '20200721123305013105000001977'
+        channelId:
+          type: string
+          description: Unique ID of the channel. Typically assigned for INBOUND dialogs to control different business workflows.
+          example: '2013770791'
+        channelType:
+          type: string
+          description: Type of the channel (e.g., VOICE, EMAIL, SMS, TWITTER, etc)
+          example: 'VOICE'
+        channelClass:
+          type: string
+          enum:
+            - VOICE
+            - DIGITAL
+          description: Class of the channel - VOICE | DIGITAL
+          example: 'VOICE'
+        channelEndpointAddress:
+          type: string
+          description: Generic identifier of the contact center / company on this channel (e.g., DNIS for dialogOrigination=INBOUND, Caller ID for dialogOrigination=OUTBOUND, corporate email, etc). Replaces interactionCallingAddress.
+          example: '7312066731'
+        contactEndpointAddress:
+          type: string
+          description: Generic identifier of contact on this channel (will always point to channelType specific ID; phoneNumber (e.164) for VOICE, twitter handle for TWITTER, etc). Replaces interactionCalledAddress
+          example: '2013770791'
+        dialogOrigination:
+          type: string
+          enum:
+            - INBOUND
+            - OUTBOUND
+          description: Origin of the dialog - INBOUND | OUTBOUND. Replaces segmentDirection.
+          example: 'INBOUND'
+        dialogStartTimeMs:
+          type: string
+          format: date-time
+          description: Start time of the dialog. Could be different from segment start time if customer was engaged with the IVR, waited in queue, etc before agent joined the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:40.000Z'
+        dialogEndTimeMs:
+          type: string
+          format: date-time
+          description: End time of the dialog. This could differ from the segment end time if there are multiple agents involved, a transfer of call occurs, or a survey queue is present. Time zone is in UTC
+          example: '2024-07-22T11:24:47.000Z'
+        dialogDurationMs:
+          type: integer
+          format: int32
+          description: The total duration of the dialog. Milliseconds precision.
+          example: 7000
+        segmentId:
+          type: string
+          description: Unique ID of the segment.
+          example: 'p-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808-190dcc63d90ab'
+        segmentType:
+          type: string
+          enum:
+            - AGENT
+            - CLIENT
+            - INBOUND
+            - OUTBOUND
+          description: Type of participant in control of the media
+          example:
+            -INBOUND: When a call is initially received by the system, the segmentType is inbound.
+            -CLIENT: When a customer initiates a digital message, the segmentType is client.
+            -AGENT: When a digital message is assigned to an agent for response, the segmentType is agent.
+        segmentParticipantRcExtensionId:
+          type: string
+          description: RingCentral user id. Optional. Available for segmentType=AGENT only.
+          example: "768980075"
+        segmentParticipantId:
+          type: string
+          description: RingCX Agent ID, IVR ID, Treatment ID, etc.
+          example: "449438"
+        segmentStartTimeMs:
+          type: string
+          format: date-time
+          description: Time contact center participant joined the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:40.000Z'
+        segmentEndTimeMs:
+          type: string
+          format: date-time
+          description: Time contact center participant left the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:47.000Z'
+        segmentDurationMs:
+          type: integer
+          format: int32
+          description: Segment duration (available even when segmentEndTimeMs is not provided). time precision till millisecond.
+          example: 832
+        segmentAgentGroupId:
+          type: string
+          description: Agent group Id
+          example: 76873
+        systemDisposition:
+          type: string
+          description: Disposition Code set by the system. This value is only available for VOICE communications.
+          example: The possible values for systemDisposition include ANSWER, NOANSWER, BUSY, MACHINE, INTERCEPT, DISCONNECT, ABANDON, CONGESTION, MANUAL-PASS, INBOUND-CALLBACK, APP-DNC, APP-REQUEUE, APP-REQUEUE-COMPLETE, APP-REQUEUE-ABANDON, INBOUND-ABANDON, API-BLOCKED, and API-ERROR.
+        agentDisposition:
+          type: string
+          description: Disposition Code set by agent from set of defined congurable code
+          example: success
+        agentNotes:
+          type: string
+          description: Notes added by agent along with agent disposition
+          example: Problem solved and customer is happy
+        hasRecording:
+          type: boolean
+          description: This field is to identify if recording data for a dialog id and segment id exists.
+          example: true
+        hasTranscript:
+          type: boolean
+          description: This field is to identify if transcripts data for a dialog id and segment id exists.
+          example: true
+        segmentEvents:
+          type: array
+          description: Ordered list of events. Can be empty if segmentRecordingURL is empty. In other cases array start with the event `REC_START`. Events don't overlap each other.
+          items:
+            $ref: '#/components/schemas/InteractionSegmentEvent'
+    InteractionSegmentEvent:
+      type: object
+      required:
+        - eventTimeMs
+        - clientEventTimeMs
+        - eventType
+      properties:
+        eventTimeMs:
+          type: string
+          format: date-time
+          description: event time with milliseconds precision. Server side. Time zone is in UTC
+          example: '2023-07-21T17:32:28.000Z'
+        clientEventTimeMs:
+          type: string
+          format: date-time
+          description: event time with milliseconds precision. Client side. Time zone is in UTC
+          example: '2023-07-21T17:32:28.000Z'
+        eventType:
+          type: string
+          enum:
+            - REC_START
+            - REC_STOP
+          example: REC_START
+    Errors:
+      type: object
+      required:
+        - generalMessage
+        - details
+        - developerMessage
+        - cause
+        - requestUri
+        - timestamp
+      properties:
+        details:
+          type: string
+          description: Details for the current message
+          example: You do not have permission to access this resource
+        generalMessage:
+          type: string
+          description: General message for the current error
+          example: You do not have permission to access this resource
+        requestUri:
+          type: string
+          description: Request uri and type
+          example: /api/integration/v1/admin/users - GET
+        developerMessage:
+          type: string
+          description: Developer message for the current error
+          example: You do not have permission to access this resource
+        cause:
+          type: string
+          description: Cause for the current error
+          example: ''
+        timestamp:
+          type: integer
+          format: int64
+          description: Timestamp
+          example: 1611847650696
+    InteractionMetadataRequest:
+      description: Parameters for interaction metadata
+      required:
+        - segmentEndTime
+        - timeInterval
+        - timeZone
+      type: object
+      properties:
+        segmentEndTime:
+          type: string
+          description: Start date and time for the logging interval
+          example: '2024-07-22 11:25:00'
+        timeInterval:
+          type: integer
+          format: int32
+          description: 'Interval length in seconds. Maximum allowed length is 3600 seconds (1 hour). Note: if your time interval start or end in the future consecutive requests may return different list of segment. Idempotent results only guaranteed for the completed intervals. Segment recording URL may be added after delay. Allow 1-2min for processing.'
+          example: 1800
+        timeZone:
+          type: string
+          description: Timezone name
+          example: US/Eastern
+    RCInteractionTranscriptData:
+      type: object
+      required:
+        - channelClass
+        - errorCode
+        - errorMessage
+        - transcript
+      properties:
+        errorCode:
+          type: string
+          description: "Fields contains error code such as 401/404/500"
+        errorMessage:
+          type: string
+          description: "Fields contains error message associated with errorCode"
+        channelClass:
+          type: string
+          enum:
+            - VOICE
+            - DIGITAL
+          description: Class of the channel - VOICE | DIGITAL
+          example: 'VOICE'
+        transcript:
+          type: array
+          items:
+            $ref: '#/components/schemas/RCTranscriptDataResponse'
+          description: "This list contains meta data for voice interaction"
+    RCTranscriptDataResponse:
+      type: object
+      required:
+        - participantId
+        - timestamp
+        - message
+      properties:
+        participantId:
+          type: string
+          description: participant id
+          example: d-664eb32cdee590000744a4d8
+        rcUserId:
+          description: RingCentral user identifier.
+          type: string
+          nullable: true
+          example: '400169025017'
+        participantType:
+          type: string
+          description: agent or customer
+          nullable: true
+          example:
+        participantName:
+          type: string
+          description: Name of the participant.
+          nullable: true
+          example: "Vinayak"
+        timestamp:
+          type: string
+          description: time stamp of the transcript, time stamp in epoch time format
+          example: '1716791799000'
+        message:
+          type: string
+          description: Transcribed message content
+          example: 'This is a sample message'
+    QueueGroup:
+      type: object
+      required:
+        - queueGroupId
+        - groupName
+        - queueGroupType
+      properties:
+        queueGroupId:
+          type: integer
+          format: int32
+          description: Unique ID for queue group
+          example: 1009
+        groupName:
+          type: string
+          description: Queue group name
+          example: Queue group
+        queueGroupType:
+          type: string
+          description: Queue Type
+          example: VOICE
+          enum:
+            - VOICE
+            - DIGITAL
+            - OMNI
+    AggregatedAgentStats:
+      type: object
+      required:
+        - interval
+        - dateTimeFrom
+        - agentId
+        - agentName
+        - availDur
+        - totWorkDur
+        - pauseDur
+        - waitDur
+        - adminDur
+        - directOutIxnCnt
+        - directOutIxnDur
+        - directInIxnCnt
+        - directInIxnDur
+      properties:
+        interval:
+          type: integer
+          format: int32
+          description: Queue stats integration intervals
+          example: 60
+        dateTimeFrom:
+          type: string
+          format: date-time
+          description: Date-time of queue stats
+          example: '03-05-2024T09:00:00Z'
+        agentId:
+          type: integer
+          format: int32
+          description: Agent Id
+          example: 132598
+        agentName:
+          type: string
+          description: Agent name
+          example: 'kaduk, alena'
+        availDur:
+          type: integer
+          format: int64
+          description: Available duration
+          example: 117
+        totWorkDur:
+          type: integer
+          format: int64
+          description: Total working duration
+          example: 117
+        pauseDur:
+          type: integer
+          format: int64
+          description: Pause duration
+          example: 0
+        waitDur:
+          type: integer
+          format: int64
+          description: waiting duration
+          example: 113
+        adminDur:
+          type: integer
+          format: int32
+          description: Admin duration
+          example: 0
+        directOutIxnCnt:
+          type: integer
+          format: int32
+          description: Direct outbound interaction count
+          example: 0
+        directOutIxnDur:
+          type: integer
+          format: int64
+          description: Direct outbound interaction duration
+          example: 0
+        directInIxnCnt:
+          type: integer
+          format: int32
+          description: Direct inbound interaction count
+          example: 1
+        directInIxnDur:
+          type: integer
+          format: int64
+          description: Direct inbound interaction duration
+          example: 5
+    AggregatedQueueStats:
+      type: object
+      required:
+        - interval
+        - dateTimeFrom
+        - queue
+        - queueName
+        - offdDirectIxnCnt
+        - overflowInIxnCnt
+        - abandIxnCnt
+        - overflowOutIxnCnt
+        - answIxnCnt
+        - queuedAndAnswIxnDur
+        - queuedAndAbandIxnDur
+        - talkingIxnDur
+        - wrapUpDur
+        - queuedAnswLongestQueDur
+        - queuedAbandLongestQueDur
+        - ansServicelevelCnt
+        - waitDur
+        - abandShortIxnCnt
+      properties:
+        interval:
+          type: integer
+          format: int32
+          description: Queue stats integration intervals
+          example: 60
+        dateTimeFrom:
+          type: string
+          format: date-time
+          description: Date-time of queue stats
+          example: '03-04-2024T01:00:00Z'
+        queue:
+          type: integer
+          format: int32
+          description: Queue Id
+          example: 5682
+        queueName:
+          type: string
+          description: Queue name
+          example: Queue
+        offdDirectIxnCnt:
+          type: integer
+          format: int32
+          description: Direction interaction count
+          example: 3
+        overflowInIxnCnt:
+          type: integer
+          format: int32
+          description: Transfered interaction count
+          example: 0
+        abandIxnCnt:
+          type: integer
+          format: int32
+          description: Abandoned interaction count
+          example: 0
+        overflowOutIxnCnt:
+          type: integer
+          format: int32
+          description: Transfered outbound interaction count
+          example: 0
+        answIxnCnt:
+          type: integer
+          format: int32
+          description: Answered interaction count
+          example: 3
+        queuedAndAnswIxnDur:
+          type: integer
+          format: int64
+          description: Queued and answered interaction count
+          example: 0
+        queuedAndAbandIxnDur:
+          type: integer
+          format: int64
+          description: Queued and abandoned interaction count
+          example: 0
+        talkingIxnDur:
+          type: integer
+          format: int64
+          description: Talking interaction duration
+          example: 9
+        wrapUpDur:
+          type: integer
+          format: int64
+          description: Wrap-up duration
+          example: 13
+        queuedAnswLongestQueDur:
+          type: integer
+          format: int64
+          description: Queued and answered longest duration
+          example: 0
+        queuedAbandLongestQueDur:
+          type: integer
+          format: int64
+          description: Queued and abandoned longest duration
+          example: 0
+        ansServicelevelCnt:
+          type: integer
+          format: int32
+          description: Answered service level count
+          example: 0
+        waitDur:
+          type: integer
+          format: int64
+          description: Waiting duration
+          example: 0
+        abandShortIxnCnt:
+          type: integer
+          format: int32
+          description: Abandoned short interaction count
+          example: 0
+        abandWithinSlCnt:
+          type: integer
+          format: int32
+          description: Abandoned service level count
+          example: 0
+    ExtendedAggregatedQueueStats:
+      type: object
+      required:
+        - interval
+        - dateTimeFrom
+        - agentId
+        - agentName
+        - queue
+        - queueName
+        - talkingIxnDur
+        - wrapUpDur
+        - answIxnCnt
+        - transferOutIxnCnt
+      properties:
+        interval:
+          type: integer
+          format: int32
+          description: Queue stats integration intervals
+          example: 60
+        dateTimeFrom:
+          type: string
+          format: date-time
+          description: Date-time of queue stats
+          example: '03-04-2024T01:00:00Z'
+        agentId:
+          type: integer
+          format: int32
+          description: Agent Id
+          example: 1
+        agentName:
+          type: string
+          description: Agent name
+          example: aws93-l13-las01 test number
+        queue:
+          type: integer
+          format: int32
+          description: Queue Id
+          example: 5682
+        queueName:
+          type: string
+          description: Queue name
+          example: Queue
+        talkingIxnDur:
+          type: integer
+          format: int64
+          description: Talking interaction duration
+          example: 3
+        wrapUpDur:
+          type: integer
+          format: int64
+          description: Wrap-up duration
+          example: 13
+        answIxnCnt:
+          type: integer
+          format: int32
+          description: Answered interaction count
+          example: 3
+        transferOutIxnCnt:
+          type: integer
+          format: int32
+          description: Transferred interaction count
+          example: 3
+    CXQueueWithAgents:
+      type: object
+      required:
+        - queueId
+        - queueName
+        - queueGroupId
+        - isActive
+        - createdOn
+        - queueType
+      properties:
+        queueId:
+          type: integer
+          format: int32
+          description: Unique ID for queue
+          example: 555
+        queueName:
+          type: string
+          description: Name of queue
+          example: Test queue
+        queueGroupId:
+          type: integer
+          format: int32
+          description: Queue group ID
+          example: 1009
+        isActive:
+          type: boolean
+          description: true if the queue is active
+          example: true
+        createdOn:
+          type: string
+          format: date-time
+          description: Timestamp when group was created
+          example: '2020-07-21T17:32:28Z'
+        queueType:
+          type: string
+          description: Queue Type
+          example: VOICE
+          enum:
+            - VOICE
+            - DIGITAL
+            - OMNI
+        agentIds:
+          type: array
+          description: List of agents who connected to this queue
+          items:
+            type: integer
+            format: int32
+          example:
+            - 10
+            - 20
+    AggregatedIntegrationParams:
+      description: Parameters for aggregated integration
+      required:
+        - startDate
+        - timeInterval
+        - timeZone
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: >-
+            Start date and time for the logging interval. Note: The integration data will
+            be generated to the nearest minute (Seconds will not be taken into
+            account).
+          example: '2024-03-04 00:00:00'
+        endDate:
+          type: string
+          description: >-
+            End date and time for the logging interval. Note: The integration data will be
+            generated to the nearest minute (Seconds will not be taken into
+            account).
+          example: '2024-03-05 01:00:00'
+        timeInterval:
+          type: integer
+          format: int32
+          enum:
+            - 15
+            - 30
+            - 45
+            - 60
+          description: Interval length in minutes.
+          example: 60
+        timeZone:
+          type: string
+          description: Timezone name
+          example: US/Eastern
+    CalabrioInteractionSegmentMetaData2Array:
+      type: array
+      items:
+        $ref: '#/components/schemas/CalabrioDialogSegmentMetaData'
+      example:
+        - subAccountId: "99999999"
+          dialogId: "s-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808"
+          interactionId: "202407221928172035020000000572"
+          channelId: "2013770791"
+          channelType: "VOICE"
+          channelClass: "VOICE"
+          channelEndpointAddress: "7312066731"
+          contactEndpointAddress: "2013770791"
+          dialogOrigination: "INBOUND"
+          dialogStartTimeMs: "2024-07-22T11:24:40.000Z"
+          dialogEndTimeMs: "2024-07-22T11:24:47.000Z"
+          dialogDurationMs: 7000
+          segmentId: "p-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808-190dcc63d90ab"
+          segmentType: "OUTBOUND"
+          segmentParticipantId: "449438"
+          segmentParticipantRcExtensionId: "985901004"
+          segmentStartTimeMs: "2024-07-22T11:24:40.000Z"
+          segmentEndTimeMs: "2024-07-22T11:24:47.000Z"
+          segmentDurationMs: 7000
+          segmentAgentGroupId: "76873"
+          systemDisposition: "ANSWER"
+          agentDisposition: "Success"
+          agentNotes: "requeue to others"
+          hasRecording: true
+          hasTranscript: true
+          segmentEvents:
+            - eventTimeMs: "2024-07-22T11:24:40.000Z"
+              clientEventTimeMs: "2024-07-22T11:24:40.000Z"
+              eventType: "REC_START"
+            - eventTimeMs: "2024-07-22T11:24:47.000Z"
+              clientEventTimeMs: "2024-07-22T11:24:47.000Z"
+              eventType: "REC_STOP"
+
+
+        -  subAccountId: "99999999"
+           dialogId: "d-65fc2f3a382dd00007d8a5d7-1711025979007"
+           interactionId: "202407230228251400000000001026"
+           channelId: "ENGAGE_MESSAGING"
+           channelType: "ENGAGE_MESSAGING"
+           channelClass: "DIGITAL"
+           channelEndpointAddress: "+16506675176"
+           contactEndpointAddress: "+1324"
+           dialogOrigination: "INBOUND"
+           dialogStartTimeMs: "2024-07-23T02:28:25.014Z"
+           dialogEndTimeMs: "2024-07-23T02:28:42.000Z"
+           dialogDurationMs: 17000
+           segmentId: "d-669e351bef0ea5000753266b-669f4d88a7ba580007b48caf"
+           segmentType: "AGENT"
+           segmentParticipantId: "789438"
+           segmentParticipantRcExtensionId: "1552533005"
+           segmentStartTimeMs: "2024-07-23T02:28:25.000Z"
+           segmentEndTimeMs: "2024-07-23T02:28:42.000Z"
+           segmentDurationMs: 17000
+           segmentAgentGroupId: "79698"
+           systemDisposition: null
+           agentDisposition: "Success"
+           agentNotes: "Engage Messaging Notes"
+           hasRecording: false
+           hasTranscript: true
+           segmentEvents : null
+
+        -  subAccountId: "99999999"
+           dialogId: "d-672dbaf7c211050006e056e1-1731050231731"
+           interactionId: "202411080217120144700000000001"
+           channelId: "EMAIL"
+           channelType: "EMAIL"
+           channelClass: "DIGITAL"
+           channelEndpointAddress: "+16506675176"
+           contactEndpointAddress: "+1324"
+           dialogOrigination: "INBOUND"
+           dialogStartTimeMs: "2024-07-23T02:28:25.014Z"
+           dialogEndTimeMs: "2024-07-23T02:28:42.000Z"
+           dialogDurationMs: 17000
+           segmentId: "d-672dbaf7c211050006e056e1-1731050231731-1930aa2600f99"
+           segmentType: "AGENT"
+           segmentParticipantId: "789438"
+           segmentParticipantRcExtensionId: "1552533005"
+           segmentStartTimeMs: "2024-07-23T02:28:25.000Z"
+           segmentEndTimeMs: "2024-07-23T02:28:42.000Z"
+           segmentDurationMs: 17000
+           segmentAgentGroupId: "79698"
+           systemDisposition: null
+           agentDisposition: "Success"
+           agentNotes: "email notes"
+           hasRecording: false
+           hasTranscript: true
+           segmentEvents : null
+
+        -  subAccountId: "99999999"
+           dialogId: "d-672dba74c211050006e056d4-1731050100923"
+           interactionId: "202411080215020144700000000000"
+           channelId: "MESSENGER"
+           channelType: "MESSENGER"
+           channelClass: "DIGITAL"
+           channelEndpointAddress: "+16506675176"
+           contactEndpointAddress: "+1324"
+           dialogOrigination: "INBOUND"
+           dialogStartTimeMs: "2024-07-23T02:28:25.014Z"
+           dialogEndTimeMs: "2024-07-23T02:28:42.000Z"
+           dialogDurationMs: 17000
+           segmentId: "d-672dba74c211050006e056d4-1731050100923-1930aa0638ea8"
+           segmentType: "AGENT"
+           segmentParticipantId: "789438"
+           segmentParticipantRcExtensionId: "1552533005"
+           segmentStartTimeMs: "2024-07-23T02:28:25.000Z"
+           segmentEndTimeMs: "2024-07-23T02:28:42.000Z"
+           segmentDurationMs: 17000
+           segmentAgentGroupId: "79698"
+           systemDisposition: null
+           agentDisposition: "Success"
+           agentNotes: "Messenger notes"
+           hasRecording: false
+           hasTranscript: true
+           segmentEvents : null
+    CalabrioDialogSegmentMetaData:
+      type: object
+      required:
+        - dialogId
+        - subAccountId
+        - interactionId
+        - channelType
+        - channelClass
+        - channelEndpointAddress
+        - contactEndpointAddress
+        - dialogOrigination
+        - dialogStartTimeMs
+        - dialogEndTimeMs
+        - dialogDurationMs
+        - segmentId
+        - segmentType
+        - segmentParticipantId
+        - segmentStartTimeMs
+        - segmentEndTimeMs
+        - segmentDurationMs
+      properties:
+        subAccountId:
+          type: integer
+          format: int64
+          description: subacount id
+          example: 99999999
+        dialogId:
+          type: string
+          description: Unique dialog ID used to connect different dialog segments together in transfer/conference scenarios.
+          example: 'd-65fc2f3a382dd00007d8a5d7-1711025979007'
+        interactionId:
+          type: string
+          description: Deprecated. Provided for backward compatibility only. Replaced by dialogId. Unique interaction ID used to connect different interaction (aka dialog) segments together in transfer/conference scenarios.
+          example: '20200721123305013105000001977'
+        channelId:
+          type: string
+          description: Unique ID of the channel. Typically assigned for INBOUND dialogs to control different business workflows.
+          example: '2013770791'
+        channelType:
+          type: string
+          description: Type of the channel (e.g., VOICE, EMAIL, SMS, TWITTER, etc)
+          example: 'VOICE'
+        channelClass:
+          type: string
+          enum:
+            - VOICE
+            - DIGITAL
+          description: Class of the channel - VOICE | DIGITAL
+          example: 'VOICE'
+        channelEndpointAddress:
+          type: string
+          description: Generic identifier of the contact center / company on this channel (e.g., DNIS for dialogOrigination=INBOUND, Caller ID for dialogOrigination=OUTBOUND, corporate email, etc). Replaces interactionCallingAddress.
+          example: '7312066731'
+        contactEndpointAddress:
+          type: string
+          description: Generic identifier of contact on this channel (will always point to channelType specific ID; phoneNumber (E.164) for VOICE, twitter handle for TWITTER, etc). Replaces interactionCalledAddress
+          example: '2013770791'
+        dialogOrigination:
+          type: string
+          enum:
+            - INBOUND
+            - OUTBOUND
+          description: Origin of the dialog - INBOUND | OUTBOUND. Replaces segmentDirection.
+          example: 'INBOUND'
+        dialogStartTimeMs:
+          type: string
+          format: date-time
+          description: Start time of the dialog. Could be different from segment start time if customer was engaged with the IVR, waited in queue, etc before agent joined the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:40.000Z'
+        dialogEndTimeMs:
+          type: string
+          format: date-time
+          description: End time of the dialog. This could differ from the segment end time if there are multiple agents involved, a transfer of call occurs, or a survey queue is present. Time zone is in UTC
+          example: '2024-07-22T11:24:47.000Z'
+        dialogDurationMs:
+          type: integer
+          format: int32
+          description: The total duration of the dialog. Milliseconds precision.
+          example: 7000
+        segmentId:
+          type: string
+          description: Unique ID of the segment.
+          example: 'p-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808-190dcc63d90ab'
+        segmentType:
+          type: string
+          enum:
+            - AGENT
+            - CLIENT
+            - INBOUND
+            - OUTBOUND
+          description: Type of participant in control of the media
+          example:
+            -INBOUND: When a call is initially received by the system, the segmentType is inbound.
+            -CLIENT: When a customer initiates a digital message, the segmentType is client.
+            -AGENT: When a digital message is assigned to an agent for response, the segmentType is agent.
+        segmentParticipantRcExtensionId:
+          type: string
+          description: RingCentral user id. Optional. Available for segmentType=AGENT only.
+          example: "768980075"
+        segmentParticipantId:
+          type: string
+          description: RingCX Agent ID, IVR ID, Treatment ID, etc.
+          example: "1009"
+        segmentStartTimeMs:
+          type: string
+          format: date-time
+          description: Time contact center participant joined the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:40.000Z'
+        segmentEndTimeMs:
+          type: string
+          format: date-time
+          description: Time contact center participant left the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:47.000Z'
+        segmentDurationMs:
+          type: integer
+          format: int32
+          description: Segment duration (available even when segmentEndTimeMs is not provided). Time precision millli second.
+          example: 7000
+        segmentAgentGroupId:
+          type: string
+          description: Agent group Id
+          example: 76873
+        systemDisposition:
+          type: string
+          description: Disposition Code set by the system. This value is only available for VOICE communications.
+          example: The possible values for systemDisposition include ANSWER, NOANSWER, BUSY, MACHINE, INTERCEPT, DISCONNECT, ABANDON, CONGESTION, MANUAL-PASS, INBOUND-CALLBACK, APP-DNC, APP-REQUEUE, APP-REQUEUE-COMPLETE, APP-REQUEUE-ABANDON, INBOUND-ABANDON, API-BLOCKED, and API-ERROR.
+        agentDisposition:
+          type: string
+          description: Disposition Code set by agent from set of defined congurable code
+          example: success
+        agentNotes:
+          type: string
+          description: Notes added by agent along with agent disposition
+          example: Problem solved and customer is happy
+        hasRecording:
+          type: boolean
+          description: This field is to identify if recording data for a dialog id and segment id exists.
+          example: true
+        hasTranscript:
+          type: boolean
+          description: This field is to identify if transcripts data for a dialog id and segment id exists.
+          example: true
+        segmentEvents:
+          type: array
+          description: Ordered list of events. Can be empty if segmentRecordingURL is empty. In other cases array start with the event `REC_START`. Events don't overlap each other.
+          items:
+            $ref: '#/components/schemas/InteractionSegmentEvent'
+tags:
+  - name: Internal Integration API
+  - name: Public Integration API
