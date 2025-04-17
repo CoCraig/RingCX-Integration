@@ -1,0 +1,528 @@
+openapi: 3.0.3
+info:
+  title: RingCX Interactions API
+  description: RingCX Interactions definition
+  contact:
+    name: RingCentral Platform Team
+    url: 'https://developers.ringcentral.com'
+    email: platform-dev-sm@ringcentral.com
+  version: '0.01'
+servers:
+  - url: http://platform.ringcentral.com
+    description: RingCX Interactions External API Entry Point
+
+x-team: RingCX
+x-internal-api: false
+x-auth-required: true
+x-service-interface: 'rest'
+x-service-name: 'eap'
+x-service-version: 'v1'
+x-throttling-group: 'Heavy'
+x-blacklisting-strategy: 'HAConnection'
+x-docs-level: Internal
+# TODO: Must use CXArtifacts app scope
+x-app-permission: 'ReadCallRecording'
+
+tags:
+  - name: Interaction Metadata
+  - name: Recordings
+  - name: Transcripts
+
+paths:
+  /cx/integration/v1/accounts/{accountId}/sub-accounts/{rcxSubAccountId}/interaction-metadata:
+    post:
+      tags:
+        - Interaction Metadata
+      summary: Query Interaction Metadata
+      description: |
+        Query the metadata of the interactions based on the specified conditions.
+
+        AccountId is the RingCentral account identifier.
+        SubAccountId is the identifier of the RingCX Sub account.
+      parameters:
+        - $ref: '../common/common-params-oaf.yml#/components/parameters/AccountId'
+        - $ref: 'ringcx-common-oaf.yml#/components/parameters/SubAccountId'
+      operationId: rcxArtifactsInteractionMetadata
+      requestBody:
+        description: JSON body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractionMetadataRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/RingCXInteractionMetadataResponse200'
+        '400':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/InvalidRequest'
+        #'401':
+        #  $ref: '../common/error-responses-oaf.yml#/components/responses/Unauthorized'
+        # 401 Not included as AGW will respond with that error
+        '403':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/Forbidden'
+        '404':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/NotFound'
+        '500':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/InternalError'
+      x-rewrite-uri-from: '/cx/interactions/v1/accounts/([^/]+)/sub-accounts/([^/]+)/interaction-metadata'
+      x-rewrite-uri-to: '/cx/integration/v1/accounts/$1/sub-accounts/$2/interaction-metadata'
+
+  /cx/integration/v1/accounts/{accountId}/sub-accounts/{rcxSubAccountId}/recordings/dialogs/{dialogId}/segments/{segmentId}:
+    get:
+      tags:
+        - Recordings
+      summary: Get Recording
+      description: |
+        Get the recording for the specified dialog and segment in the subaccount.
+
+        AccountId is the RingCentral account identifier.
+        SubAccountId is the identifier of the RingCX Sub account.
+        DialogId is the dialog identifier.
+        SegmentId is the intervention segment identifier.
+      parameters:
+        - $ref: '../common/common-params-oaf.yml#/components/parameters/AccountId'
+        - $ref: 'ringcx-common-oaf.yml#/components/parameters/SubAccountId'
+        - $ref: '#/components/parameters/DialogId'
+        - $ref: '#/components/parameters/SegmentId'
+      operationId: rcxArtifactsGetRecording
+      responses:
+        '200':
+          $ref: '#/components/responses/RingCXInteractionGetRecordingResponse200'
+        '400':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/InvalidRequest'
+        '403':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/Forbidden'
+        '404':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/NotFound'
+        '500':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/InternalError'
+      x-rewrite-uri-from: '/cx/interactions/v1/accounts/([^/]+)/sub-accounts/([^/]+)/recordings/dialogs/([^/]+)/segments/([^/]+)'
+      x-rewrite-uri-to: '/cx/integration/v1/accounts/$1/sub-accounts/$2/recordings/dialogs/$3/segments/$4'
+
+  /cx/integration/v1/accounts/{accountId}/sub-accounts/{rcxSubAccountId}/transcripts/dialogs/{dialogId}/segments/{segmentId}:
+    get:
+      tags:
+        - Transcripts
+      summary: Get Transcript
+      description: |
+        Get the specified transcript.
+
+        AccountId is the RingCentral account identifier.
+        SubAccountId is the identifier of the RingCX Sub account.
+        DialogId is the dialog identifier.
+        SegmentId is the intervention segment identifier.
+      operationId: rcxArtifactsGetTranscript
+      parameters:
+        - $ref: '../common/common-params-oaf.yml#/components/parameters/AccountId'
+        - $ref: 'ringcx-common-oaf.yml#/components/parameters/SubAccountId'
+        - $ref: '#/components/parameters/DialogId'
+        - $ref: '#/components/parameters/SegmentId'
+      responses:
+        '200':
+          $ref: '#/components/responses/RingCXInteractionGetTranscriptResponse200'
+        '400':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/InvalidRequest'
+        '403':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/Forbidden'
+        '404':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/NotFound'
+        '500':
+          $ref: '../common/error-responses-oaf.yml#/components/responses/InternalError'
+      x-rewrite-uri-from: '/cx/interactions/v1/accounts/([^/]+)/sub-accounts/([^/]+)/transcripts/dialogs/([^/]+)/segments/([^/]+)'
+      x-rewrite-uri-to: '/cx/integration/v1/accounts/$1/sub-accounts/$2/transcripts/dialogs/$3/segments/$4'
+
+components:
+
+  schemas:
+
+    RingCXChannelClass:
+      description: Channel class of the interaction
+      type: string
+      enum:
+        - Voice
+        - Digital
+      example: 'Voice'
+
+    #TODO more segments provided in the past - Currently provided only Agent IVR
+    RingCXSegmentType:
+      description: Segment type of the interaction
+      type: string
+      enum:
+        - Contact
+        - Agent
+        - IVR
+        - Treatment
+        - Bot
+
+    SystemDisposition:
+      description: Disposition code set by the system. This code is applicable for Voice communications only.
+      type: string
+      example: Answer
+      enum:
+        - Answer
+        - NoAnswer
+        - Busy
+        - Machine
+        - Intercept
+        - Disconnect
+        - Abandon
+        - Congestion
+        - ManualPass
+        - InboundCallback
+        - AppDNC
+        - AppRequeue
+        - AppRequeueComplete
+        - AppRequeueAbandon
+        - InboundAbandon
+        - APIBlocked
+        - APIError
+
+    RingCXDialogOriginationType:
+      description: Dialog origination type of the interaction. Replaces segmentDirection.
+      type: string
+      enum:
+        - Inbound
+        - Outbound
+
+    InteractionMetadataRequest:
+      type: object
+      required:
+        - segmentEndTime
+        - timeIntervalInSeconds
+        - timeZone
+      properties:
+        segmentEndTime:
+          type: string
+          format: date-time
+          description: Time when the segment ends
+          example: '2023-06-19T12:15:37.072804Z'
+        # TODO: Other API Spec reports in milliseconds
+        #timeIntervalMs:
+        timeIntervalInSeconds:
+          description: |
+            Time interval length of the segment in seconds. Maximum allowed is 3600 seconds (1 hour).
+            Note: 
+            * If the time interval specified start or end in the future, consecutive requests may
+            return different list of segments. 
+            * Results only guaranteed for completed time intervals.
+            * Segment recording URL may be added after delay. Allow 1-2min for processing.
+          type: integer
+          format: int64
+          example: 1800
+        timeZone:
+          type: string
+          maxLength: 128
+          description: Timezone used for the segment
+          example: 'US/Eastern'
+
+    InteractionEventType:
+      description: Event type of the interaction
+      type: string
+      enum:
+        - RecordingStart
+        - RecordingStop
+      example: 'RecordingStart'
+
+    InteractionSegmentEvent:
+      description: Interaction segment event that has recording event information
+      type: object
+      required:
+        - eventTimeInMs
+        - clientEventTimeInMs
+        - eventType
+      properties:
+        #TODO: Does milliseconds matter?
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the interaction segment event
+          example: '2020-07-21T17:32:28.000Z'
+        clientEventTimeInMs:
+          type: string
+          format: date-time
+          description: Client time of the interaction segment event in milliseconds
+          example: '2020-07-21T17:32:28.000Z'
+        eventType:
+          $ref: '#/components/schemas/InteractionEventType'
+
+    InteractionSegmentList:
+      type: object
+      properties:
+        agentGroupList:
+          description: Interaction segment list
+          items:
+            $ref: '#/components/schemas/InteractionSegmentEvent'
+          type: array
+          minItems: 0
+
+    InteractionMetadataModel:
+      type: object
+      required:
+        - subAccountId
+        - dialogId
+        - interactionId
+        - channelType
+        - channelClass
+        - channelEndpointAddress
+        - contactEndpointAddress
+        - dialogOrigination
+        - dialogStartTimeMs
+        - dialogEndTimeMs
+        - dialogDurationMs
+        - segmentId
+        - segmentType
+        - segmentParticipantId
+        - segmentStartTimeMs
+        - segmentEndTimeMs
+        - segmentDurationMs      
+      properties:
+        dialogId:
+          description: Dialog identifier of the interaction
+          type: string
+          example: 's-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808'
+        subAccountId:
+          description: RingCX sub account Id
+          type: string
+          example: '99999999'
+        interactionId:
+          description: |
+            Deprecated. Provided for backward compatibility only. 
+            Replaced by dialogId. Unique interaction identifier used to connect different interaction segments
+            (aka dialog) together in transfer/conference scenarios.
+          type: string
+          example: '20200721123305013105000001977'
+        channelId:
+          description: |
+            Unique identifier of the channel. Typically assigned for Inbound dialogs to control different business workflows.
+            For voice interactions, the channelId corresponds to the DNIS (Phone number) and for digital interactions, a unique 
+            identifier(UUID) is generated.
+          type: string
+          example: '2013770791'
+        #TODO: should be an enum?
+        channelType:
+          description: Interaction channel type
+          type: string
+          example: 'Voice'
+        channelClass:
+          $ref: '#/components/schemas/RingCXChannelClass'
+        #TODO - do we need to specify replaces as nothing exists today? May be useful for old RCX app developers?
+        channelEndPointAddress:
+          description: |
+            Generic identifier of the contact center / company on this channel. For example, DNIS for Inbound dialogs, 
+            caller Id for Outbound dialogs, corporate email, etc). Replaces interactionCallingAddress.
+          type: string
+          example: '7312066731'
+        contactEndpointAddress:
+          description: |
+            Generic identifier of the contact on this channel. This identifier will depend on the channel type.
+            For example, phone number (E.164) for Voice, Twitter handle for Twitter, etc). Replaces interactionCalledAddress
+            Interaction contact endpoint address
+          type: string
+          example: '2013770791'
+        dialogOrigination:
+          $ref: '#/components/schemas/RingCXDialogOriginationType'
+        #TODO Does Ms apply? Timezone already in date time format, so is it needed?
+        dialogStartTimeInMs:
+          type: string
+          format: date-time
+          description: |
+            Start time of the dialog. Could be different from segment start time if customer was engaged with the IVR, waited in queue, etc
+            before agent joined the conversation. Milliseconds precision. Time zone is in UTC.
+          example: '2024-07-22T11:24:40.000Z'
+        dialogEndTimeInMs:
+          type: string
+          format: date-time
+          description: |
+            End time of the dialog. This could differ from the segment end time if there are multiple agents involved. For example, a 
+            transfer of call occurs, or a survey queue is present. Time zone is in UTC
+          example: '2024-07-22T11:24:47.000Z'
+        dialogDurationInMs:
+          description: Interaction dialog duration in milliseconds
+          type: integer
+          format: int64
+          example: 70000
+        segmentId:
+          description: Segment identifier of the interaction
+          type: string
+          example: 'p-v-93bd0e6f0f0a479ea8025fe8f8ec3e1d-1721690897808-190dcc63d90ab'
+        segmentType:
+          $ref: '#/components/schemas/RingCXSegmentType'
+        segmentParticipantId:
+          description: Segment identifier of the interaction. RingCX Agent ID, IVR ID, Treatment ID, etc.
+          type: string
+          example: '449438'
+        #TODO: use segmentParticipantExtensionId instead of segmentParticipantRcExtensionId
+        segmentParticipantExtensionId:
+          description: Segment identifier of the interaction. RingCentral user id. Optional. Available for segmentType=AGENT only.
+          type: string
+          example: '985901004'
+        #TODO Does Ms apply? Timezone already in date time format, so is it needed?
+        # TODO: Is it agent - should we call contact center participant?
+        segmentStartTimeInMs:
+          type: string
+          format: date-time
+          description: |
+            Time contact center participant joined the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:40.000Z'
+        segmentEndTimeInMs:
+          type: string
+          format: date-time
+          description: |
+            Time contact center participant left the conversation. Milliseconds precision. Time zone is in UTC
+          example: '2024-07-22T11:24:47.000Z'
+        segmentDurationInMs:
+          description: |
+            Segment duration (available even when segmentEndTimeMs is not provided). time precision till millisecond.
+          type: integer
+          format: int64
+          example: 70000
+        #TODO: should be string?
+        segmentAgentGroupId:
+          description: Agent group Id
+          type: integer
+          format: int64
+          example: 76873
+        systemDisposition:
+          $ref: '#/components/schemas/SystemDisposition'
+        agentDisposition:
+          description: Disposition code set by agent from a set of pre-defined configurable code
+          type: string
+          example: 'Success'
+        agentNotes:
+          description: Agent provided notes along with agent disposition
+          type: string
+          example: 'requeue to others'
+        hasRecording:
+          description: Is recorded included
+          type: boolean
+          example: true
+        hasTranscript:
+          description: Is transcript included
+          type: boolean
+          example: true
+        segmentEvents:
+          $ref: '#/components/schemas/InteractionSegmentList'
+
+    InteractionMetadataModelList:
+      type: object
+      properties:
+        agentGroupList:
+          description: Interaction metadata list
+          items:
+            $ref: '#/components/schemas/InteractionMetadataModel'
+          type: array
+          minItems: 0
+
+    InteractionTranscriptsModel:
+      type: object
+      required:
+        - channelClass
+        - errorCode
+        - errorMessage
+        - transcript
+      properties:
+        # TODO: Channel class reported a string
+        channelClass:
+          $ref: '#/components/schemas/RingCXChannelClass'
+        errorCode:
+          description: Interaction contact endpoint address
+          type: string
+          example: 'none'
+        errorMessage:
+          description: Interaction contact endpoint address
+          type: string
+          example: 'No Error'
+        transcripts:
+          $ref: '#/components/schemas/InteractionTranscriptList'
+
+    InteractionTranscriptModel:
+      type: object
+      required:
+        - participantId
+        - timestamp
+        - message      
+      properties:
+        participantId:
+          description: Participant identifier
+          type: string
+          example: 'd-664eb32cdee590000744a4d8'
+        #TODO: Use userId instead of rcUserId 
+        userId:
+          description: RingCentral user identifier
+          type: string
+          example: '123456'
+        participantName:
+          description: Name of the participant
+          type: string
+          example: 'Bob Smith'
+        #TODO appears to be different from Agent or Customer
+        participantType:
+          $ref: 'ringcx-common-oaf.yml#/components/schemas/ParticipantType'
+        timestamp:
+          description: Unix timestamp of the transcription
+          type: string
+          example: '1721651880000'
+        message:
+          description: Transcript message
+          type: string
+          example: 'I cannot transfer number porting'
+
+
+    InteractionTranscriptList:
+      type: object
+      properties:
+        agentGroupList:
+          description: Interaction transcript list
+          items:
+            $ref: '#/components/schemas/InteractionTranscriptModel'
+          type: array
+          minItems: 0
+
+    CallRecording:
+      type: object
+      properties:
+        body:
+          type: string
+          description: Binary info of the recording
+
+  parameters:
+
+    DialogId:
+      in: path
+      name: dialogId
+      required: true
+      schema:
+        type: string
+      example: 'd-668cf1d0a626550007d01d1b-1720512976864-1909690a312da'
+
+    SegmentId:
+      in: path
+      name: segmentId
+      required: true
+      schema:
+        type: string
+      example: 'd-668d1051a626550007d02828-1720520785904-19097081cf749'
+
+  responses:
+
+    RingCXInteractionMetadataResponse200:
+      description: Successful response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InteractionMetadataModelList'
+
+    #TODO - Binary info not provided 
+    RingCXInteractionGetRecordingResponse200:
+      description: Successful response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CallRecording'
+
+    RingCXInteractionGetTranscriptResponse200:
+      description: Successful response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InteractionTranscriptsModel'
